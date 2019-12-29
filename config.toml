@@ -1,4 +1,4 @@
-baseURL = "linuxias.github.io"
+baseURL = "/"
 languageCode = "en-US"
 
 title = "Developer's Delight"
@@ -37,10 +37,6 @@ theme = "hugo-theme-learn"
 
 [outputs]
 home = [ "HTML", "RSS", "JSON"]
-
-[[menu.shortcuts]] 
-name = "I am Seungha Son"
-weight = 10
 
 [[menu.shortcuts]] 
 name = "<i class='fab fa-github'></i> Github repo"
