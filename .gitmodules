@@ -2,7 +2,6 @@
     path = public
     url = https://github.com/linuxias/linuxias.github.io
 
-[submodule "theme-hugo-learn"]
-    path = themes/theme-hugo-learn
+[submodule "hugo-theme-learn"]
+    path = themes/hugo-theme-learn
     url = https://github.com/matcornic/hugo-theme-learn
-    
