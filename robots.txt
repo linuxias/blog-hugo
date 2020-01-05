@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: http://linuxias.github.io/sitemap.xml
