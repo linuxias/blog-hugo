@@ -77,3 +77,34 @@ RUN apt-get install net-tools -y
 
 CMD 명령어는 생성된 이미지를 이용하여 컨테이너를 동작 시킬 때 컨테이너 시작 시 실행할 명령어 입니다. 단 한번만 사용할 수 있습니다. 명시하지 않는다면 기본적으로 /bin/bash 명령어가 실행됩니다.
 
+##### ENV
+
+Dockefile 내부에서 사용할 환경변수를 설정합니다. `ENV` 는 도커 이미지에 포함되므로 해당 이미지로 생성하는 컨테이너에서 이 환경변수를 사용할 수 있습니다. 사용 방법은 `${variable_name}` 또는 $variable_name 형태로 사용할 수 있습니다.
+
+```bash
+# This contents in Dockerfile
+FROM ubuntu:18.04
+LABEL maintainer = "Seungha Son <linuxias@gamil.com>"
+ENV install_tool net-tools
+RUN apt-get update
+RUN apt-get install $install_tool -y
+CMD ["/bin/bash"]
+```
+
+`$install_tool` 환경 변수는 컨테이너 에서도 사용이 가능하며 `docker run` 시 `-e` 옵션을 이용하여 환경변수를 덮어쓸 수 있습니다.
+
+##### VOLUME
+
+`VOLUME`은 컨테이너를 생성 했을 시 호스트 머신과 공유할 컨테이너 내부의 디렉터리를 설정합니다. 여러 개의 디렉터리 경로를 설정할 수 도 있습니다.
+
+##### ARG
+
+`docker build` 명령어 실행 시 추가로 입력을 받아 Dockefile 내부에서 사용될 변수의 값을 설정할 수 있습니다.
+
+##### USER
+
+기본적으로 컨테이너 실행 시 `root` 권한으로 실행 됩니다. 만약 다른 사용자 계정으로 실행하고자 할 때 `USER`를 사용합니다.
+
+### 참고자료
+- https://docs.docker.com/engine/reference/builder/
+- 시작하세요! 도커/쿠버네티스. 용찬호 지음. 위키북스
