@@ -53,9 +53,26 @@ LABEL maintainer "Seungha Son <linuxias@gmail.com>"
 ##### ADD
 
 파일을 이미지에 추가할 때 사용합니다. Dockerfile이 위치한 경로에 파일을 포함합니다. 아래 예제는 Dockerfile이 존재하는 경로의 test.txt 파일을 생성하는 이미지의 /home/ 경로에 추가합니다. 두 번째 예제는 3개의 텍스트 파일을 /home/ 경로에 추가하는 내용입니다. 이 처럼 여러 파일을 한 번에 명시할 수도 있습니다.
+
 ```
 ADD test.txt /home/
 ADD [test.txt test1.txt test2.txt /home/]
+```
+ADD는 로컬에 있는 파일 뿐만아니라 URL을 명시하면 해당 URL의 파일을 복사해줍니다. 또한 tar 파일도 지원합니다. tar도 일반적인 파일인데, 뭐가 다를까라고 생각하실 수 있지만, ADD로 tar 파일을 추가 시 tar 파일의 압축을 풀어 내부 파일들을 해당 경로에 복사해줍니다. tar 파일 그 자체를 복사하는 것이 아니죠. 
+
+```
+ADD https://this/is/test/url.html /home/
+ADD test_comp.tar /home/
+```
+
+
+##### COPY
+
+ADD와 유사하게 파일을 이미지에 복사해 줍니다. COPY는 로컬에 존재하는 파일만 복사를 해주는 것이 ADD와 유사합니다. 하지만 COPY는 ADD에서 지원하는 URL, tar 파일에 대한 것은 지원하지 않습니다.
+
+```
+COPY test.txt /home/
+COPY [test.txt test1.txt test2.txt /home/]
 ```
 
 ##### WORKDIR
@@ -103,7 +120,14 @@ CMD ["/bin/bash"]
 
 ##### USER
 
-기본적으로 컨테이너 실행 시 `root` 권한으로 실행 됩니다. 만약 다른 사용자 계정으로 실행하고자 할 때 `USER`를 사용합니다.
+기본적으로 컨테이너 실행 시 `root` 권한으로 실행 됩니다. 만약 다른 사용자 계정으로 실행하고자 할 때 `USER`를 사용합니다. root 가 아닌 `linuxias` 란 계정으로 시작하길 원하신다면 아래와 같이 작성해 줍니다.
+```bash
+USER linuxias
+```
+
+##### ENTRYPOINT
+
+매우 매우 중요한 !!! 내용!. 앞서 컨테이너가 시작할 때 실행할 명령어를 설정해주는 방법으로 `CMD`를 설명하였습니다. `CMD` 와 유사한 기능을 하는 것이 ENTRYPOINT 입니다.
 
 ### 참고자료
 - https://docs.docker.com/engine/reference/builder/
