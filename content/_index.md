@@ -12,6 +12,8 @@ date: 2019-12-30T23:06:22+09:00
 
 
 #### Career
+- 2020.02 ~ Current, Software Engineer, Tizen Platform lab, Samsung Research, Samgsung Electronic.
+	- System performance optimization and profiling
 - 2018.03 ~ 2020.01, Software Engineer, Mac Platform, Network Business, Samgsung Electronic.
 - 2016.03 ~ 2018.02, Software Engineer, Tizen Platform lab, Samsung Research, Samgsung Electronic.
 - 2014.02 ~ 2016.02, Human Resource Management, Software Membership team, Samsung Research, Samgsung Electronic.
