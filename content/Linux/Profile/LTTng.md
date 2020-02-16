@@ -1,6 +1,5 @@
 +++
 title = "[TOOL] LTTng"
-draft = true
 +++
 
 LTTng는 리눅스 프로파일링을 위한 오픈소스 트레이싱 프레임워크입니다. LTTng는 `Linux Trace Toolkit: next generation` 의 약자로 리눅스 커널, 사용자 어플리케이션(C/C++, java, python), 라이브러리를 트레이싱할 수 있습니다.
