@@ -124,6 +124,8 @@ CMD ["/bin/bash"]
 ```bash
 USER linuxias
 ```
+이때 유의할 점은현재 존재하는 사용자여야 합니다. `adduser` 명령어를 이용하여 미리 사용자를 만들어놓던지, `volume`을 이용하여 /etc/passwd 파일을 사용하도록 하고 호스트머신에 존재하는 사용자를 `USER`명령어로 사용합니다.
+
 
 ##### ENTRYPOINT
 
