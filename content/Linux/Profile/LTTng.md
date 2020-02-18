@@ -1,5 +1,5 @@
 +++
-title = "LTTng"
+title = "LTTng:userspace"
 +++
 
 LTTng는 리눅스 프로파일링을 위한 오픈소스 트레이싱 프레임워크입니다. LTTng는 `Linux Trace Toolkit: next generation` 의 약자로 리눅스 커널, 사용자 어플리케이션(C/C++, java, python), 라이브러리를 트레이싱할 수 있습니다.
@@ -266,6 +266,30 @@ $ LD_PRELOAD=liblttng-ust-cyg-profile.so:liblttng-ust-libc-warrper.so my-app
 ```
 
 위 처럼 어플리케이션 실행 시 각 라이브러리의 이벤트가 등록되고 `lttng list --userspace` 명령어를 통해 확인할 수 있다.
+아래는 [LTTng userspace helper test](https://github.com/linuxias/Example/tree/master/blog/LTTng/lttng-ust-example/lttng-ust-helper])를 빌드하여 순차적으로 적용한 결과 중 일부분을 가져온 내용이다. 예제 코드 내에 재귀함수가 있기에 `func_entry` 이벤트가 순차적으로 발생한 후 `func_exit` 이벤트가 발생하는 것을 확인할 수 있다.
+```bash
+$babeltrace ~/lttng-traces/auto-20200218-204301
+...
+[20:38:11.907388453] (+3.229928201) desktop lttng_ust_libc:malloc: { cpu_id = 1 }, { size = 4, ptr = 0x151BD40 }
+[20:38:11.907391355] (+0.000002902) desktop lttng_ust_libc:free: { cpu_id = 1 }, { ptr = 0x151BD40 }
+[20:38:11.907395975] (+0.000004620) desktop lttng_ust_cyg_profile:func_entry: { cpu_id = 1 }, { addr = 0x4006B6, call_site = 0x40076D }
+[20:38:11.907396463] (+0.000000488) desktop lttng_ust_cyg_profile:func_entry: { cpu_id = 1 }, { addr = 0x4006B6, call_site = 0x4006ED }
+[20:38:11.907396778] (+0.000000315) desktop lttng_ust_cyg_profile:func_entry: { cpu_id = 1 }, { addr = 0x4006B6, call_site = 0x4006ED }
+[20:38:11.907397090] (+0.000000312) desktop lttng_ust_cyg_profile:func_entry: { cpu_id = 1 }, { addr = 0x4006B6, call_site = 0x4006ED }
+[20:38:11.907397410] (+0.000000320) desktop lttng_ust_cyg_profile:func_entry: { cpu_id = 1 }, { addr = 0x4006B6, call_site = 0x4006ED }
+[20:38:11.907397722] (+0.000000312) desktop lttng_ust_cyg_profile:func_entry: { cpu_id = 1 }, { addr = 0x4006B6, call_site = 0x4006ED }
+[20:38:11.907398032] (+0.000000310) desktop lttng_ust_cyg_profile:func_entry: { cpu_id = 1 }, { addr = 0x4006B6, call_site = 0x4006ED }
+...
+[20:38:11.907402689] (+0.000000283) desktop lttng_ust_cyg_profile:func_exit: { cpu_id = 1 }, { addr = 0x4006B6, call_site = 0x4006ED }
+[20:38:11.907402972] (+0.000000283) desktop lttng_ust_cyg_profile:func_exit: { cpu_id = 1 }, { addr = 0x4006B6, call_site = 0x4006ED }
+[20:38:11.907403263] (+0.000000291) desktop lttng_ust_cyg_profile:func_exit: { cpu_id = 1 }, { addr = 0x4006B6, call_site = 0x4006ED }
+[20:38:11.907403543] (+0.000000280) desktop lttng_ust_cyg_profile:func_exit: { cpu_id = 1 }, { addr = 0x4006B6, call_site = 0x4006ED }
+[20:38:11.907403818] (+0.000000275) desktop lttng_ust_cyg_profile:func_exit: { cpu_id = 1 }, { addr = 0x4006B6, call_site = 0x4006ED }
+[20:38:11.907404092] (+0.000000274) desktop lttng_ust_cyg_profile:func_exit: { cpu_id = 1 }, { addr = 0x4006B6, call_site = 0x4006ED }
+[20:38:11.907404378] (+0.000000286) desktop lttng_ust_cyg_profile:func_exit: { cpu_id = 1 }, { addr = 0x4006B6, call_site = 0x40076D }
+[20:38:11.907404684] (+0.000000306) desktop lttng_ust_cyg_profile:func_exit: { cpu_id = 1 }, { addr = 0x40070D, call_site = 0x7FD716ED8830 }
+...
+```
 
 ### 추적 결과 확인하기
 
@@ -277,7 +301,10 @@ $ LD_PRELOAD=liblttng-ust-cyg-profile.so:liblttng-ust-libc-warrper.so my-app
 
 이 중 tracecompass를 사용하려 합니다. tracecompass는 eclipse 기반의 분석 툴로서 lttng-analyses를 External analyses로 플러그인 처럼 추가하여 사용할 수 있습니다. lttng-analyses는 babeltrace를 필요로 하기에 3가지 툴 모두 설치를 하여야 합니다.
 
+tracecompass를 이용하여 lttng-traces 결과를 import 하게되면 아래와 같이 표시됩니다. tracecomposs는 `userspace`보다는 `kernel` 트레이싱 시에 더 큰 효율을 발휘 합니다.
 
-### 개인적인 의견
+![tracecompass](https://drive.google.com/uc?id=12g6ANZiTl59J3RkiuYoORTZNV1b_n6Db)
 
+사용자 영역에 대해서는 로그 수준의 화면만 확인할 수 있습니다.
 
+감사합니다.
