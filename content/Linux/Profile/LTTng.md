@@ -185,8 +185,9 @@ clean:
 
 ```bash
 $lttng-sessiond --daemonize
-$ ./lttng_ust_test
+$./lttng_ust_test
 ```
+
 실행하면 정지해 있습니다. 다른 창에서 확인해 보면.. 아래와 같이 이벤트가 등록되어 있음을 확인할 수 있습니다. 만약 프로세스가 종료되면 이벤트들은 모두 사라지면 확인할 수 없습니다.
 
 ```bash
@@ -229,17 +230,42 @@ PID: 17109 - Name: ./lttng_ust_test
 $lttng create
 Session auto-20200215-175158 created.
 Traces will be output to /home/linuxias/lttng-traces/auto-20200215-175158
+
 $lttng enable-event --userspace linuxias_hello_world:my_first_tracepoint
 UST event linuxias_hello_world:my_first_tracepoint created in channel channel0
+
 $lttng start
 Tracing started for session auto-20200215-175158
 // 예제 프로세스를 종료합니다.
+
 $lttng destroy
 Waiting for destruction of session "auto-20200215-175158"...
 Session "auto-20200215-175158" destroyed
+
 $babeltrace ~/lttng-traces
 [17:52:13.462294498] (+412.893280571) desktop linuxias_hello_world:my_first_tracepoint: { cpu_id = 0 }, { my_string_field = "./lttng_ust_test", my_integer_field = 4 }
 ```
+
+`babeltrace`를 이용하면 문자열 기반의 로그 형태로 확인을 할 수 있습니다.
+
+### Userspace 친구들
+
+LTTng는 사용자 영역 트레이싱을 위해 추가적인 라이브러리들을 지원합니다.
+
+|Library|Description|
+|---|---|
+|`liblttng-ust-libc-warrper.so`|C 표준 라이브러리 추적 도구|
+|`liblttng-ust-pthread-wrapper.so`|POSIX pthread 함수 추적 도구|
+|`liblttng-ust-cyg-profile.so`|함수의 진입과 종료에 대한 추적 도구. 주의할 점은 이 라이브러리를 사용하기 위해서 어플리케이션이 `-finstrument-function` 컴파일 플래그가 적용되어 컴파일 되어야 한다. |
+|`liblttng-ust-dl.so`|`dlopen(3)`, `dlclose(3)` 함수 호출 추적 도구|
+
+위 라이브러리들은 어플리케이션 빌드 시 링크될 필요가 없이 `LD_PRELOAD`를 이용하여 어플리케이션에 적용할 수 있다.
+```bash
+$ LD_PRELOAD=liblttng-ust-dl.so my-app
+$ LD_PRELOAD=liblttng-ust-cyg-profile.so:liblttng-ust-libc-warrper.so my-app
+```
+
+위 처럼 어플리케이션 실행 시 각 라이브러리의 이벤트가 등록되고 `lttng list --userspace` 명령어를 통해 확인할 수 있다.
 
 ### 추적 결과 확인하기
 
@@ -250,4 +276,8 @@ $babeltrace ~/lttng-traces
 - lttng-analyses
 
 이 중 tracecompass를 사용하려 합니다. tracecompass는 eclipse 기반의 분석 툴로서 lttng-analyses를 External analyses로 플러그인 처럼 추가하여 사용할 수 있습니다. lttng-analyses는 babeltrace를 필요로 하기에 3가지 툴 모두 설치를 하여야 합니다.
+
+
+### 개인적인 의견
+
 
