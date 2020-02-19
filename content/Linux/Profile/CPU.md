@@ -235,6 +235,49 @@ $ sudo perf sched latency
 
 #### 통계 정보 확인하기 (stat)
 
+stat은 CPC(CPU Performance Cycle)를 기반으로 CPU 사이클에 대한 통계 정보를 제공한다. 특정 프로세스를 실행하여 분석을 할 수도 있으며 전체에 대해 추적할 수도 있다. 아래는 `df -h` 명령어에 대한 통계 정보를 확인한 것 이다. 결과를 확인하면 CPU 사용, 컨텍스트 스위칭 횟수, 및 시간, 페이지 폴트, CPU 마이그레이션, 명령어를 수행하는데 사용한 싸이클 등 다양한 정보가 제공된다.
+
+```bash
+$sudo perf stat df -h
+...
+ Performance counter stats for 'df -h':
+
+              1.73 msec task-clock                #    0.813 CPUs utilized          
+                 0      context-switches          #    0.000 K/sec                  
+                 0      cpu-migrations            #    0.000 K/sec                  
+                80      page-faults               #    0.046 M/sec                  
+         3,207,136      cycles                    #    1.849 GHz                    
+         1,874,078      stalled-cycles-frontend   #   58.43% frontend cycles idle   
+         2,999,986      instructions              #    0.94  insn per cycle         
+                                                  #    0.62  stalled cycles per insn
+           635,894      branches                  #  366.542 M/sec                  
+            19,691      branch-misses             #    3.10% of all branches        
+
+       0.002134928 seconds time elapsed
+
+       0.002180000 seconds user
+       0.000000000 seconds sys
+
+```
+
+
+#### 이벤트 이용하여 통계 정보 확인하기
+perf는 확인할 수 있는 다양한 이벤트 리스트를 제공한다. `perf list`를 통해 확인해 보자. 그 중 CPU와 관련된 많은 이벤트들도 존재한다. 몇몇 이벤트를 선별하여 테스트 해보자. 아래와 같이 본인이 원하는 이벤트에 대한 결과만 확인할 수 있따.
+
+```bash
+$sudo perf stat -e instructions,cycles,cache-misses du -a -h
+ Performance counter stats for 'du -a -h':
+
+     2,296,353,620      instructions              #    0.65  insn per cycle         
+                                                  #    0.00  stalled cycles per insn
+     3,543,461,302      cycles                                                      
+         2,002,191      cache-misses                                                
+
+       1.769061539 seconds time elapsed
+
+       0.331797000 seconds user
+       0.659498000 seconds sys
+```
 
 #### Reference
  1. 시스템 성능 분석과 최적화 | 브렌든 그레그 지음, 오현석, 서형국 옮김 | 위키북스
