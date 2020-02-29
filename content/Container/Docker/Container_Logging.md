@@ -1,5 +1,5 @@
 +++
-title = "[Logging] Overview"
+title = "Logging"
 +++
 
 `docker logs` 명령어는 이용하여 동작중인 컨테이너의 로그 정보를 볼 수 있습니다. `docker logs` 명령어는 터미널에서 대화식으로 명령을 실행했을 때와 같이 명령의 출력을 표시합니다. UNIX 및 Linux 명령은 일반적으로 STDIN, STDOUT 및 STDERR이라는 3 개의 I/O 스트림이 실행될 때 열립니다. STDIN은 명령의 입력 스트림으로 키보드 입력 또는 다른 명령 입력을 포함 할 수 있습니다. STDOUT은 일반적으로 명령의 일반 출력이며 STDERR은 일반적으로 오류 메시지를 출력하는 데 사용됩니다. 기본적으로 `docker logs`에는 명령의 STDOUT 및 STDERR이 표시됩니다.
