@@ -20,5 +20,5 @@ date: 2019-12-30T23:06:22+09:00
 - 2012.07 ~ 2013.12, Member, Samsung Software Membership
 
 #### Education
-- 2017 ~ 2019, Yonsei Universiry master’s degree, Major : Computer Science
+- 2017 ~ 2019, Yonsei University master’s degree, Major : Computer Science
 - 2007 ~ 2014, Korea Education & Technology University, Major : Mechatronics Engineering
