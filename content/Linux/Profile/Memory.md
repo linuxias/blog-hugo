@@ -102,7 +102,6 @@ total kB           29812    4224    1204
 
 ```
 
-
 ## 문제분석 경험
 
 ### 1. 새로운 환경에서 재컴파일하지 않은 어플리케이션의 PSS와 SWAP 영역이 증가한 상황
@@ -114,3 +113,77 @@ total kB           29812    4224    1204
  - 프로세스를 실행 한 직후 얻은 결과와 10분 후 재측정한 결과에서 PSS가 다르게 나타날 수 있다.
  - 만약 A프로세스가 6MB 메모리를 사용하고 그 중 2MB가 그 프로세스의 고유 영역이라면, 나머지 4MB는 공유 메모리이다. 4MB의 공유메모리를 4개의 프로세스가 공유하고 있다면 PSS는 2MB + (4MB/4) = 3MB가 된다.
    출처: https://ecogeo.tistory.com/255 [아키텍트를 꿈꾸며 - 에코지오]
+
+### 3. Application의 메모리 증가 (gcc 버전에 따른 메모리 증가)
+
+#### 문제상황
+ - 빌드시스템에서 컴파일러 변경 후 메모리 증가
+ 
+#### 문제확인
+ - 바이너리 사이즈 확인 시 증가된 상황 확인. /proc/[pid]/smap 을 이용하여 PSS와 다른 메모리 정보 분석.
+
+```bash
+RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH	Symbols		FORTIFY	Fortified	Fortifiable  FILE
+No RELRO        Canary found      NX enabled    DSO             No RPATH   RW-RUNPATH   No Symbols
+
+readelf -l elf_example
+
+Elf file type is DYN (Shared object file)
+Entry point 0x6554
+There are 6 program headers, starting at offset 52
+
+Program Headers:
+  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+  EXIDX          0x01cc98 0x0001cc98 0x0001cc98 0x00688 0x00688 R   0x4
+  LOAD           0x000000 0x00000000 0x00000000 0x1d324 0x1d324 R E 0x10000
+  LOAD           0x01d324 0x0002d324 0x0002d324 0x0072c 0x0078c RW  0x10000
+  DYNAMIC        0x01d5bc 0x0002d5bc 0x0002d5bc 0x00130 0x00130 RW  0x4
+  NOTE           0x0000f4 0x000000f4 0x000000f4 0x00024 0x00024 R   0x4
+  GNU_STACK      0x000000 0x00000000 0x00000000 0x00000 0x00000 RW  0x10
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     .ARM.exidx 
+   01     .note.gnu.build-id .gnu.hash .dynsym .dynstr .gnu.version .gnu.version_r .rel.dyn .rel.plt .init .plt .text .fini .rodata .ARM.extab .ARM.exidx .eh_frame 
+   02     .init_array .fini_array .jcr .data.rel.ro .dynamic .got .data .bss 
+   03     .dynamic 
+   04     .note.gnu.build-id 
+   05     
+``` 
+
+- 새로 컴파일한 바이너리의 정보 확인
+```bash
+RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH	Symbols		FORTIFY	Fortified	Fortifiable  FILE
+Partial RELRO   Canary found      NX enabled    DSO             No RPATH   RW-RUNPATH   No Symbols      Yes	2		8	./elf_example
+
+Elf file type is DYN (Shared object file)
+Entry point 0x5d78
+There are 7 program headers, starting at offset 52
+
+Program Headers:
+  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+  EXIDX          0x01d5f4 0x0001d5f4 0x0001d5f4 0x005d0 0x005d0 R   0x4
+  LOAD           0x000000 0x00000000 0x00000000 0x1dbc8 0x1dbc8 R E 0x10000
+  LOAD           0x01dc4c 0x0002dc4c 0x0002dc4c 0x00700 0x00730 RW  0x10000
+  DYNAMIC        0x01ded0 0x0002ded0 0x0002ded0 0x00130 0x00130 RW  0x4
+  NOTE           0x000114 0x00000114 0x00000114 0x00024 0x00024 R   0x4
+  GNU_STACK      0x000000 0x00000000 0x00000000 0x00000 0x00000 RW  0x10
+  GNU_RELRO      0x01dc4c 0x0002dc4c 0x0002dc4c 0x003b4 0x003b4 R   0x1
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     .ARM.exidx 
+   01     .note.gnu.build-id .gnu.hash .dynsym .dynstr .gnu.version .gnu.version_r .rel.dyn .rel.plt .init .plt .text .fini .rodata .ARM.extab .ARM.exidx .eh_frame 
+   02     .init_array .fini_array .data.rel.ro .dynamic .got .data .bss 
+   03     .dynamic 
+   04     .note.gnu.build-id 
+   05     
+   06     .init_array .fini_array .data.rel.ro .dynamic 
+```
+
+위 바이너리 정보를 확인 시 checksec으로 확인 시 `RELRO` 가 달라진 것을 확인할 수 있다. 이전 바이너리는 `NO RELRO`였으나 현재 바이너리는 `Partial RELRO`이다.
+
+프로그램 헤더 정보를 확인해 보니 현재 바이너리에 `GNU_RELRO`란 메모리 영역이 새로 생성되었음을 확인 할 수 있다.
+
+이번에 gcc를 9버전으로 업데이트하여 빌드한 결과물의 차이이다. gcc 9을 살펴보니 relro 관련 옵션이 기본으로 활성화 되어있음을 확인할 수 있다. 이로 인해 새로운 섹션들이 추가되었고 어플리케이션 메모리가 증가함을 확인하였다.
+
