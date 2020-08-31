@@ -2,7 +2,7 @@ baseURL = "https://linuxias.github.io/"
 languageCode = "en-US"
 
 title = "Developer's Delight"
-theme = "hugo-theme-learn"
+theme = ["my-shortcodes", "base-theme", "hyde"]
 
 googleAnalytics = "UA-155363330-1"
 
