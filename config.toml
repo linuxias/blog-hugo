@@ -2,7 +2,7 @@ baseURL = "https://linuxias.github.io/"
 languageCode = "en-US"
 
 title = "Developer's Delight"
-theme = ["my-shortcodes", "base-theme", "hyde"]
+theme = "hugo-theme-learn"
 
 googleAnalytics = "UA-155363330-1"
 
@@ -11,7 +11,7 @@ googleAnalytics = "UA-155363330-1"
   # Prefix URL to edit current page. Will display an "Edit this page" button on top right hand corner of every page. 
   # Useful to give opportunity to people to create merge request for your doc.
   # See the config.toml file from this documentation site to have an example.
-  editURL = ""
+  editURL = "linuxias.github.io"
   # Author of the site, will be used in meta information
   author = "Seungha Son"
   # Description of the site, will be used in meta information
