@@ -4,6 +4,13 @@ title = "CPU Profiling"
 
 # CPU Analysis
 
+### 현재 CPU 정보 확인하기
+
+#### CPU core 별 clock 확인하기
+```bash
+cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq 
+```
+
 ### uptime
 
 시스템 부하 평균을 표시한다. load average의 값은 앞에서부터 1분, 5분, 15분 동안의 평균 부하이다.
